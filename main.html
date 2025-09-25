@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Birthday Celebration</title>
+<link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Poppins:wght@300;600;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0f1020;
+    --fg: #fff;
+    --accent: #ff77e9;
+    --accent2: #7cf3ff;
+    --gold: #FFCC4D;
+    --pink: #ff5fa2;
+    --green: #7CFC9E;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: radial-gradient(1200px 800px at 50% -10%, #1b1c3b, #0e0f20), var(--bg);
+    color: var(--fg);
+    font-family: Poppins, system-ui, -apple-system, Segoe UI, Roboto;
+    overflow-x: hidden;
+  }
+  .screen { display: none; min-height: 100vh; align-items: center; justify-content: center; flex-direction: column; padding: 20px; position: relative; }
+  .show { display: flex; }
+  .center { text-align: center; }
+  .btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    color: #0b0b18;
+    padding: 14px 36px;
+    border-radius: 16px;
+    font-weight: 800;
+    font-size: 1.3em;
+    margin-top: 34px;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(255,119,233,.23);
+    transition: transform .15s;
+  }
+  .btn:active { transform: scale(.97); }
+  .title {
+    font-family: Parisienne, cursive;
+    font-size: 3.3em;
+    line-height: 1.05;
+    background: linear-gradient(180deg,#fff,#ffd3f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 20px;
+  }
+  .subtitle {
+    text-align: center;
+    opacity: 0.9;
+    margin: 0 0 18px 0;
+    font-size: 1.1em;
+  }
+  /* Cake */
+  .cake-wrap { display: flex; justify-content: center; margin: 30px 0 28px 0; }
+  .cake {
+    position: relative;
+    width: 320px;
+    height: 220px;
+    filter: drop-shadow(0 22px 48px rgba(0,0,0,.33));
+    margin: auto;
+  }
+  .cake__plate {
+    position: absolute;
+    left: 50%;
+    bottom: -14px;
+    transform: translateX(-50%);
+    width: 110%;
+    height: 22px;
+    background: linear-gradient(180deg, #c7d0ff, #9aa7ff);
+    border-radius: 999px;
+  }
+  .cake__layer {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.22);
+  }
+  .cake__layer--bottom { bottom: 30px; width: 100%; height: 110px; background: linear-gradient(180deg,#ffbcd9,#ff86c3); }
+  .cake__layer--middle { bottom: 94px; width: 78%; height: 90px; background: linear-gradient(180deg,#ffd9a8,#ffc06a); }
+  .cake__layer--top { bottom: 138px; width: 56%; height: 70px; background: linear-gradient(180deg,#cdb6ff,#a688ff); }
+  .cake__cream {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 138px;
+    width: 56%;
+    height: 26px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 0 0 rgba(255, 255, 255, 0.7);
+  }
+  .cake__cream::before, .cake__cream::after {
+    content: "";
+    position: absolute;
+    top: 18px;
+    width: 24px;
+    height: 34px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 56px 10px 0 0 #fff, 112px 20px 0 0 #fff, -48px 12px 0 0 #fff, -80px 8px 0 0 #fff;
+  }
+  .cake__cream::before { left: 16px; }
+  .cake__cream::after { right: 16px; }
+  .candle {
+    position: absolute;
+    bottom: 190px;
+    left: 50%;
+    transform: translateX(calc(-50% + var(--x)));
+    width: 14px;
+    height: 62px;
+  }
+  .candle .body {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 14px;
+    height: 50px;
+    background: repeating-linear-gradient(45deg, #fff 0 8px, #ffd1dc 8px 16px);
+    border-radius: 6px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.28) inset;
+  }
+  .candle .wick {
+    position: absolute;
+    bottom: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2.5px;
+    height: 15px;
+    background: #222;
+    border-radius: 3px;
+  }
+  .candle .flame {
+    position: absolute;
+    bottom: 56px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 14px;
+    height: 14px;
+    background: radial-gradient(ellipse at center, #fff7a8 0%, #ffd46a 60%, rgba(255,212,106,0) 70%);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    filter: drop-shadow(0 0 12px #ffd46a);
+  }
+  /* Balloons */
+  .balloons {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 10;
+  }
+  .balloon {
+    position: absolute;
+    bottom: -150px;
+    width: 50px;
+    height: 65px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation: floatUp 9s linear infinite;
+    box-shadow: inset -10px -15px 30px rgba(0, 0, 0, 0.35);
+  }
+  .balloon:nth-child(1) { left: 8%; background: var(--pink); animation-duration: 10s;}
+  .balloon:nth-child(2) { left: 25%; background: #66d9ff; animation-duration: 8.5s;}
+  .balloon:nth-child(3) { left: 42%; background: #ffd166; animation-duration: 9s;}
+  .balloon:nth-child(4) { left: 65%; background: #b28dff; animation-duration: 8.7s;}
+  .balloon:nth-child(5) { left: 80%; background: var(--green); animation-duration: 9.5s;}
+  @keyframes floatUp {
+    0% {transform: translateY(30px); opacity: 1;}
+    100% {transform: translateY(-120vh); opacity: 0;}
+  }
+  /* Fireworks canvas */
+  #fwCanvas {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<section id="loading" class="screen show center">
+  <div>
+    <h1 class="title">Something special is loading...</h1>
+    <button class="btn" id="toCakeBtn">Begin 🎉</button>
+  </div>
+</section>
+
+<!-- Cake + Wish -->
+<section id="cake" class="screen center" style="position:relative;">
+  <canvas id="fwCanvas"></canvas>
+  <div class="balloons" aria-hidden="true">
+    <div class="balloon"></div><div class="balloon"></div><div class="balloon"></div><div class="balloon"></div><div class="balloon"></div>
+  </div>
+  <div>
+    <h1 class="title">Happy Birthday!</h1>
+    <div class="cake-wrap">
+      <div class="cake">
+        <div class="cake__layer cake__layer--bottom"></div>
+        <div class="cake__layer cake__layer--middle"></div>
+        <div class="cake__layer cake__layer--top"></div>
+        <div class="cake__cream"></div>
+        <div class="cake__plate"></div>
+        <div class="candle" style="--x:-30%"><span class="flame"></span><span class="wick"></span><span class="body"></span></div>
+        <div class="candle" style="--x:-10%"><span class="flame"></span><span class="wick"></span><span class="body"></span></div>
+        <div class="candle" style="--x:10%"><span class="flame"></span><span class="wick"></span><span class="body"></span></div>
+        <div class="candle" style="--x:30%"><span class="flame"></span><span class="wick"></span><span class="body"></span></div>
+      </div>
+    </div>
+    <p class="subtitle">Wishing you a fantastic day and an amazing year ahead! 🎉</p>
+    <button class="btn" id="toMsgBtn">Next</button>
+  </div>
+</section>
+
+<!-- Message -->
+<section id="message" class="screen center">
+  <div>
+    <h2 class="title">A Birthday Message</h2>
+    <p class="subtitle">Hello!</p>
+    <p style="font-size:1.08em; max-width:420px; margin: 0 auto 10px auto;">
+      Just wanted to wish you a wonderful birthday. Hope your day is filled with laughter, fun, and great moments. Have a great year ahead!
+    </p>
+    <button class="btn" id="toEndBtn">Next</button>
+  </div>
+</section>
+
+<!-- Ending with fireworks -->
+<section id="end" class="screen center" style="position: relative; overflow: hidden;">
+  <canvas id="endCanvas" style="position: absolute; inset: 0; z-index: 0; pointer-events: none;"></canvas>
+  <div style="position: relative; z-index: 5; max-width: 500px; text-align: center;">
+    <h2 class="title">Thank you </h2>
+    <p class="subtitle" style="margin-bottom: 36px;">
+      Wishing you happiness, success, and good times. Take care!
+    </p>
+    <button class="btn" id="replayBtn">Replay</button>
+  </div>
+</section>
+
+<script>
+  const screens = ["loading", "cake", "message", "end"];
+  function show(id) {
+    screens.forEach(s => document.getElementById(s).classList.remove("show"));
+    document.getElementById(id).classList.add("show");
+  }
+
+  document.getElementById("toCakeBtn").addEventListener("click", () => {
+    show("cake");
+    startFireworks();
+  });
+  document.getElementById("toMsgBtn").addEventListener("click", () => show("message"));
+  document.getElementById("toEndBtn").addEventListener("click", () => {
+    show("end");
+    startEndFireworks();
+  });
+  document.getElementById("replayBtn").addEventListener("click", () => {
+    show("loading");
+    cancelAnimationFrame(fwLoopId);
+    cancelAnimationFrame(endLoopId);
+  });
+
+  // Candle flame animation
+  setInterval(() => {
+    document.querySelectorAll(".flame").forEach(f => {
+      f.style.opacity = (0.6 + Math.random()*0.3).toFixed(2);
+      f.style.transform = `scale(${0.9 + Math.random()*0.15})`;
+    });
+  }, 130);
+
+  // Fireworks for Cake screen
+  const fwCanvas = document.getElementById("fwCanvas");
+  const ctx = fwCanvas.getContext("2d");
+  let W, H, fireworks = [], particles = [];
+  let fwLoopId = null;
+
+  function resizeCake() {
+    W = fwCanvas.width = fwCanvas.offsetWidth = fwCanvas.parentElement.clientWidth;
+    H = fwCanvas.height = fwCanvas.offsetHeight = fwCanvas.parentElement.clientHeight;
+  }
+  window.addEventListener('resize', resizeCake);
+
+  function rand(min, max) { return Math.random()*(max-min)+min; }
+  function Firework(x, y, targetX, targetY) {
+    this.x=x; this.y=y; this.sx=x; this.sy=y; this.tx=targetX; this.ty=targetY;
+    this.distanceToTarget=Math.hypot(targetX-x,targetY-y);
+    this.distanceTraveled=0;
+    const angle=Math.atan2(targetY-y,targetX-x);
+    this.vx=Math.cos(angle)*rand(5,9);
+    this.vy=Math.sin(angle)*rand(6,10);
+    this.brightness=rand(50,80);
+  }
+  Firework.prototype.update = function(i) {
+    this.x+=this.vx; this.y+=this.vy;
+    this.distanceTraveled=Math.hypot(this.x-this.sx,this.y-this.sy);
+    if(this.distanceTraveled>=this.distanceToTarget) {
+      createExplosion(this.tx,this.ty);
+      fireworks.splice(i,1);
+    }
+  }
+  Firework.prototype.draw = function() {
+    ctx.beginPath();
+    ctx.moveTo(this.sx,this.sy);
+    ctx.lineTo(this.x,this.y);
+    ctx.strokeStyle=`hsla(${rand(0,360)},100%,${this.brightness}%,0.7)`;
+    ctx.lineWidth=4;
+    ctx.stroke();
+    ctx.closePath();
+    this.sx=this.x; this.sy=this.y;
+  }
+
+  function Particle(x,y,color) {
+    this.x=x; this.y=y;
+    this.vx=rand(-4,4); this.vy=rand(-4,4);
+    this.alpha=1; this.size=rand(2,5); this.color=color;
+  }
+  Particle.prototype.update = function(i) {
+    this.vx*=0.98;
+    this.vy=this.vy*0.97+0.08;
+    this.x+=this.vx;
+    this.y+=this.vy;
+    this.alpha-=0.013;
+    if(this.alpha<=0) {
+      particles.splice(i,1);
+    }
+  }
+  Particle.prototype.draw = function() {
+    ctx.globalAlpha=this.alpha;
+    ctx.fillStyle=this.color;
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha=1;
+  }
+  function createExplosion(x,y) {
+    const hue = Math.floor(rand(0,360));
+    for(let i=0;i<90;i++) {
+      particles.push(new Particle(x,y,`hsla(${hue},100%,${Math.floor(rand(55,80))}%,${rand(0.72,1)})`));
+    }
+  }
+  function startFireworks() {
+    resizeCake();
+    cancelAnimationFrame(fwLoopId);
+    fireworks.length = 0; particles.length = 0;
+    for(let i=0;i<7;i++) {
+      fireworks.push(new Firework(rand(W*0.2,W*0.8),H,rand(W*0.28,W*0.72),rand(H*0.14,H*0.41)));
+    }
+    loop();
+  }
+  function loop() {
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = "rgba(15,16,32,0.18)";
+    ctx.fillRect(0,0,W,H);
+    for(let i=fireworks.length-1;i>=0;i--) { fireworks[i].update(i); fireworks[i].draw(); }
+    for(let i=particles.length-1;i>=0;i--) { particles[i].update(i); particles[i].draw(); }
+    if(Math.random()<0.05) { fireworks.push(new Firework(rand(0,W),H,rand(W*0.15,W*0.85),rand(H*0.13,H*0.47))); }
+    fwLoopId = requestAnimationFrame(loop);
+  }
+
+  // Fireworks for Ending screen (full canvas)
+  const endCanvas = document.getElementById("endCanvas");
+  const endCtx = endCanvas.getContext("2d");
+  let endW, endH, endFireworks = [], endParticles = [];
+  let endLoopId = null;
+
+  function resizeEnd() {
+    endW = endCanvas.width = endCanvas.offsetWidth;
+    endH = endCanvas.height = endCanvas.offsetHeight;
+  }
+  window.addEventListener('resize', resizeEnd);
+
+  function EndFirework(x,y,targetX,targetY) {
+    this.x=x; this.y=y; this.sx=x; this.sy=y; this.tx=targetX; this.ty=targetY;
+    this.distanceToTarget=Math.hypot(targetX-x,targetY-y);
+    this.distanceTraveled=0;
+    const angle=Math.atan2(targetY-y,targetX-x);
+    this.vx=Math.cos(angle)*rand(7,12);
+    this.vy=Math.sin(angle)*rand(8,13);
+    this.brightness=rand(50,80);
+  }
+  EndFirework.prototype.update = function(i) {
+    this.x+=this.vx; this.y+=this.vy;
+    this.distanceTraveled=Math.hypot(this.x-this.sx,this.y-this.sy);
+    if(this.distanceTraveled>=this.distanceToTarget) {
+      createEndExplosion(this.tx,this.ty);
+      endFireworks.splice(i,1);
+    }
+  }
+  EndFirework.prototype.draw = function() {
+    endCtx.beginPath();
+    endCtx.moveTo(this.sx,this.sy);
+    endCtx.lineTo(this.x,this.y);
+    endCtx.strokeStyle=`hsla(${rand(0,360)},100%,${this.brightness}%,0.85)`;
+    endCtx.lineWidth=6;
+    endCtx.stroke();
+    endCtx.closePath();
+    this.sx=this.x; this.sy=this.y;
+  }
+
+  function EndParticle(x,y,color) {
+    this.x=x; this.y=y;
+    this.vx=rand(-4,4); this.vy=rand(-4,4);
+    this.alpha=1; this.size=rand(3,6); this.color=color;
+  }
+  EndParticle.prototype.update = function(i) {
+    this.vx*=0.96;
+    this.vy=this.vy*0.97+0.1;
+    this.x+=this.vx;
+    this.y+=this.vy;
+    this.alpha-=0.012;
+    if(this.alpha<=0) {
+      endParticles.splice(i,1);
+    }
+  }
+  EndParticle.prototype.draw = function() {
+    endCtx.globalAlpha=this.alpha;
+    endCtx.fillStyle=this.color;
+    endCtx.beginPath();
+    endCtx.arc(this.x,this.y,this.size,0,Math.PI*2);
+    endCtx.fill();
+    endCtx.globalAlpha=1;
+  }
+  function createEndExplosion(x,y) {
+    const hue = Math.floor(rand(0,360));
+    for(let i=0;i<100;i++) {
+      endParticles.push(new EndParticle(x,y,`hsla(${hue},100%,${Math.floor(rand(55,80))}%,${rand(0.75,1)})`));
+    }
+  }
+  function startEndFireworks() {
+    resizeEnd();
+    cancelAnimationFrame(endLoopId);
+    endFireworks.length = 0; endParticles.length = 0;
+    for(let i=0;i<10;i++) {
+      endFireworks.push(new EndFirework(rand(endW*0.15,endW*0.85),endH,rand(endW*0.25,endW*0.75),rand(endH*0.2,endH*0.6)));
+    }
+    endLoop();
+  }
+  function endLoop() {
+    endCtx.clearRect(0, 0, endW, endH);
+    endCtx.fillStyle = "rgba(15,16,32,0.04)";
+    endCtx.fillRect(0, 0, endW, endH);
+    for(let i=endFireworks.length-1;i>=0;i--) {
+      endFireworks[i].update(i); endFireworks[i].draw();
+    }
+    for(let i=endParticles.length-1;i>=0;i--) {
+      endParticles[i].update(i); endParticles[i].draw();
+    }
+    if(Math.random() < 0.06) {
+      endFireworks.push(new EndFirework(rand(0,endW),endH,rand(endW*0.1,endW*0.9),rand(endH*0.1,endH*0.55)));
+    }
+    endLoopId = requestAnimationFrame(endLoop);
+  }
+
+  // Show first screen
+  show("loading");
+</script>
+</body>
+</html>
